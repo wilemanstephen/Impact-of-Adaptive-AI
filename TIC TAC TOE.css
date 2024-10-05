@@ -1,0 +1,67 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #333;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+.cell {
+    border: 1px solid white;
+    width: 100px;
+    height: 100px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.cell.X { color: blue; }
+.cell.O { color: red; }
+
+.win-highlight {
+    background-color: yellow;  /* Color for winning line */
+}
+
+.tie {
+    background-color: green; /* Color for tie scenario */
+}
+
+#reset {
+    display: block;
+    width: 100px;
+    padding: 10px;
+    margin: 20px auto;
+    background-color: #555;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.finish {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#info {
+    text-align: center;
+    margin-bottom: 20px;
+}
