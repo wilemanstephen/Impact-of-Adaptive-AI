@@ -30,7 +30,7 @@ table {
 .cell.O { color: red; }
 
 .win-highlight {
-    background-color: yellow;  /* Color for winning line */
+    background-color: turquoise;
 }
 
 .tie {
