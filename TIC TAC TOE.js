@@ -1,7 +1,7 @@
 var board;
 const player = 'X';
 const ai = 'O';
-let currentDifficulty = 'Easy';  // Can be changed through the UI
+let currentDifficulty = 'Easy';
 const difficulties = ["Easy", "Defensive", "Offensive"];
 let winCount = 0;
 let lossCount = 0;
@@ -27,7 +27,7 @@ function startGame() {
     for (let i = 0; i < cells.length; i++) {
         cells[i].innerText = '';
         cells[i].style.removeProperty('background-color');
-        cells[i].className = 'cell'; // Reset all classes to just 'cell'
+        cells[i].className = 'cell';
         cells[i].addEventListener('click', turnClick, false);
     }
     document.querySelector('.finish').style.display = "none";
@@ -48,7 +48,7 @@ function turnClick(square) {
 function turn(squareId, player) {
     board[squareId] = player;
     document.getElementById(squareId).innerText = player;
-    document.getElementById(squareId).classList.add(player === 'X' ? 'X' : 'O'); // Apply X or O color
+    document.getElementById(squareId).classList.add(player === 'X' ? 'X' : 'O');
     let gameWon = checkWin(board, player);
     if (gameWon) gameOver(gameWon);
 }
@@ -143,12 +143,12 @@ function changeDifficulty() {
     let currentIndex = difficulties.indexOf(currentDifficulty);
     currentDifficulty = difficulties[(currentIndex + 1) % difficulties.length];
     document.getElementById('difficulty').innerText = `Difficulty: ${currentDifficulty}`;
-    startGame();  // Reset the game with new difficulty
+    startGame();
 }
 
 function clearHighlight() {
     cells.forEach(cell => {
-        cell.classList.remove('win-highlight', 'tie'); // Remove any win or tie highlights
+        cell.classList.remove('win-highlight', 'tie');
     });
 }
 
