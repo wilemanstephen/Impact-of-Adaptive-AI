@@ -2,7 +2,7 @@ var board;
 const player = 'X';
 const ai = 'O';
 let currentDifficulty = 'Easy';
-const difficulties = ["Easy", "Defensive", "Offensive"];
+const difficulties = ["Easy", "Defensive", "Offensive", "Optimal"];
 let winCount = 0;
 let lossCount = 0;
 let tieCount = 0;
@@ -62,7 +62,6 @@ function checkWin(board, player) {
             break;
         }
     }
-    if (gameWon) gameOver(gameWon);
     return gameWon;
 }
 
@@ -73,15 +72,15 @@ function gameOver(gameWon) {
     document.querySelector('.finish').style.display = "block";
     document.querySelector('.finish .message').innerText = gameWon.player === player ? "You win!" : "You lose.";
     cells.forEach(cell => cell.removeEventListener('click', turnClick));
-    updateScore(gameWon.player === player);
-}
-
-function updateScore(isPlayer) {
-    if (isPlayer) {
+    if (gameWon.player === player) {
         winCount++;
     } else {
         lossCount++;
     }
+    updateScores();
+}
+
+function updateScores() {
     document.getElementById('wins').innerText = winCount;
     document.getElementById('losses').innerText = lossCount;
     document.getElementById('ties').innerText = tieCount;
@@ -89,11 +88,10 @@ function updateScore(isPlayer) {
 
 function checkTie() {
     if (emptySquares().length === 0) {
-        for (let i = 0; i < cells.length; i++) {
-            cells[i].classList.add('tie');
-        }
+        cells.forEach(cell => cell.classList.add('tie'));
         declareWinner("Tie Game!");
         tieCount++;
+        updateScores();
         return true;
     }
     return false;
@@ -108,6 +106,8 @@ function bestSpot() {
         return offensiveMove();
     } else if (currentDifficulty === "Defensive") {
         return defensiveMove();
+    } else if (currentDifficulty === "Optimal") {
+        return optimalMove();
     } else {
         return randomMove();
     }
@@ -137,6 +137,65 @@ function findCriticalMove(player) {
         }
     }
     return null;
+}
+
+function optimalMove() {
+    let bestScore = -Infinity;
+    let bestMove;
+    board.forEach((spot, idx) => {
+        if (typeof spot === 'number') {
+            board[idx] = ai;
+            let score = minimax(board, 0, false);
+            board[idx] = spot;
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = idx;
+            }
+        }
+    });
+    return bestMove;
+}
+
+function minimax(newBoard, depth, isMaximizing) {
+    let result = checkWinner(newBoard);
+    if (result !== null) return result === ai ? 10 : result === player ? -10 : 0;
+
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        newBoard.forEach((spot, idx) => {
+            if (typeof spot === 'number') {
+                newBoard[idx] = ai;
+                let score = minimax(newBoard, depth + 1, false);
+                newBoard[idx] = spot;
+                bestScore = Math.max(score, bestScore);
+            }
+        });
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        newBoard.forEach((spot, idx) => {
+            if (typeof spot === 'number') {
+                newBoard[idx] = player;
+                let score = minimax(newBoard, depth + 1, true);
+                newBoard[idx] = spot;
+                bestScore = Math.min(score, bestScore);
+            }
+        });
+        return bestScore;
+    }
+}
+
+function checkWinner(board) {
+    let winner = null;
+    winCombos.forEach((combo) => {
+        if (combo.every(i => board[i] === ai)) {
+            winner = ai;
+        } else if (combo.every(i => board[i] === player)) {
+            winner = player;
+        }
+    });
+    if (winner) return winner;
+    return board.every(spot => typeof spot !== 'number') ? 'tie' : null;
 }
 
 function changeDifficulty() {
