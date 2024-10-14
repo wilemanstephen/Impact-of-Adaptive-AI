@@ -1,0 +1,6 @@
+Difficulty: Optimal
+X position 0
+O position 3
+X position 7
+Winner: O
+Winning move: [3, 4, 5]

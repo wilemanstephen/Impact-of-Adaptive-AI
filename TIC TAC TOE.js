@@ -1,11 +1,8 @@
 var board;
 const player = 'X';
 const ai = 'O';
-let currentDifficulty = 'Easy';
+let currentDifficulty = '';
 const difficulties = ["Easy", "Defensive", "Offensive", "Optimal"];
-let winCount = 0;
-let lossCount = 0;
-let tieCount = 0;
 const winCombos = [
     [0, 1, 2],
     [3, 4, 5],
@@ -17,12 +14,18 @@ const winCombos = [
     [2, 4, 6]
 ];
 
-document.getElementById('reset').addEventListener('click', startGame);
-document.getElementById('change-difficulty').addEventListener('click', changeDifficulty);
-const cells = document.querySelectorAll('.cell');
-startGame();
+document.getElementById('reset').addEventListener('click', () => {
+    logGameState(initializeGameWithRandomDifficulty);
+});
 
-function startGame() {
+document.getElementById('change-difficulty').addEventListener('click', () => {
+    logGameState(initializeGameWithRandomDifficulty);
+});
+
+const cells = document.querySelectorAll('.cell');
+initializeGameWithRandomDifficulty();
+
+function initializeGame() {
     board = Array.from(Array(9).keys());
     for (let i = 0; i < cells.length; i++) {
         cells[i].innerText = '';
@@ -32,8 +35,14 @@ function startGame() {
     }
     document.querySelector('.finish').style.display = "none";
     document.getElementById('difficulty').innerText = `Difficulty: ${currentDifficulty}`;
-    updateScores();
     clearHighlight();
+}
+
+function initializeGameWithRandomDifficulty() {
+    const randomIndex = Math.floor(Math.random() * difficulties.length);
+    currentDifficulty = difficulties[randomIndex];
+    document.getElementById('difficulty').innerText = `Difficulty: ${currentDifficulty}`;
+    initializeGame();
 }
 
 function turnClick(square) {
@@ -72,26 +81,60 @@ function gameOver(gameWon) {
     document.querySelector('.finish').style.display = "block";
     document.querySelector('.finish .message').innerText = gameWon.player === player ? "You win!" : "You lose.";
     cells.forEach(cell => cell.removeEventListener('click', turnClick));
-    if (gameWon.player === player) {
-        winCount++;
-    } else {
-        lossCount++;
-    }
-    updateScores();
+    logGameState(() => {});
 }
 
-function updateScores() {
-    document.getElementById('wins').innerText = winCount;
-    document.getElementById('losses').innerText = lossCount;
-    document.getElementById('ties').innerText = tieCount;
+function logGameState(callback) {
+    let logData = `Difficulty: ${currentDifficulty}\n`;
+    let xTurn = true;
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === player && xTurn) {
+            logData += `X position ${i}\n`;
+            xTurn = false;
+        } else if (board[i] === ai && !xTurn) {
+            logData += `O position ${i}\n`;
+            xTurn = true;
+        }
+    }
+
+    const gameWon = checkWin(board, player) || checkWin(board, ai);
+    if (gameWon) {
+        const winner = gameWon.player === player ? "X" : "O";
+        logData += `Winner: ${winner}\n`;
+        logData += `Winning move: [${winCombos[gameWon.index].join(", ")}]\n`;
+    } else if (checkTie()) {
+        logData += `Winner: Tie\n`;
+    }
+
+    console.log('Attempting to log game state...', logData);
+
+    fetch('http://127.0.0.1:5000/log', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ log: logData })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Game logged successfully:', data.message);
+        callback();
+    })
+    .catch(error => {
+        console.error('Error logging game state:', error);
+        callback();
+    });
 }
 
 function checkTie() {
     if (emptySquares().length === 0) {
         cells.forEach(cell => cell.classList.add('tie'));
         declareWinner("Tie Game!");
-        tieCount++;
-        updateScores();
         return true;
     }
     return false;
@@ -202,7 +245,7 @@ function changeDifficulty() {
     let currentIndex = difficulties.indexOf(currentDifficulty);
     currentDifficulty = difficulties[(currentIndex + 1) % difficulties.length];
     document.getElementById('difficulty').innerText = `Difficulty: ${currentDifficulty}`;
-    startGame();
+    initializeGame();
 }
 
 function clearHighlight() {
