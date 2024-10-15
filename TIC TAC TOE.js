@@ -14,19 +14,14 @@ const winCombos = [
     [2, 4, 6]
 ];
 
-document.getElementById('reset').addEventListener('click', () => {
-    logGameState(initializeGameWithRandomDifficulty);
-});
-
-document.getElementById('change-difficulty').addEventListener('click', () => {
-    logGameState(initializeGameWithRandomDifficulty);
-});
-
 const cells = document.querySelectorAll('.cell');
+let moveHistory = [];
+
 initializeGameWithRandomDifficulty();
 
 function initializeGame() {
     board = Array.from(Array(9).keys());
+    moveHistory = []; 
     for (let i = 0; i < cells.length; i++) {
         cells[i].innerText = '';
         cells[i].style.removeProperty('background-color');
@@ -34,7 +29,6 @@ function initializeGame() {
         cells[i].addEventListener('click', turnClick, false);
     }
     document.querySelector('.finish').style.display = "none";
-    document.getElementById('difficulty').innerText = `Difficulty: ${currentDifficulty}`;
     clearHighlight();
 }
 
@@ -56,6 +50,7 @@ function turnClick(square) {
 
 function turn(squareId, player) {
     board[squareId] = player;
+    moveHistory.push({ player: player, position: squareId });
     document.getElementById(squareId).innerText = player;
     document.getElementById(squareId).classList.add(player === 'X' ? 'X' : 'O');
     let gameWon = checkWin(board, player);
@@ -81,60 +76,18 @@ function gameOver(gameWon) {
     document.querySelector('.finish').style.display = "block";
     document.querySelector('.finish .message').innerText = gameWon.player === player ? "You win!" : "You lose.";
     cells.forEach(cell => cell.removeEventListener('click', turnClick));
-    logGameState(() => {});
-}
-
-function logGameState(callback) {
-    let logData = `Difficulty: ${currentDifficulty}\n`;
-    let xTurn = true;
-    for (let i = 0; i < board.length; i++) {
-        if (board[i] === player && xTurn) {
-            logData += `X position ${i}\n`;
-            xTurn = false;
-        } else if (board[i] === ai && !xTurn) {
-            logData += `O position ${i}\n`;
-            xTurn = true;
-        }
-    }
-
-    const gameWon = checkWin(board, player) || checkWin(board, ai);
-    if (gameWon) {
-        const winner = gameWon.player === player ? "X" : "O";
-        logData += `Winner: ${winner}\n`;
-        logData += `Winning move: [${winCombos[gameWon.index].join(", ")}]\n`;
-    } else if (checkTie()) {
-        logData += `Winner: Tie\n`;
-    }
-
-    console.log('Attempting to log game state...', logData);
-
-    fetch('http://127.0.0.1:5000/log', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ log: logData })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Game logged successfully:', data.message);
-        callback();
-    })
-    .catch(error => {
-        console.error('Error logging game state:', error);
-        callback();
-    });
+    setTimeout(() => {
+        logGameState(() => initializeGameWithRandomDifficulty());
+    }, 2000);
 }
 
 function checkTie() {
     if (emptySquares().length === 0) {
         cells.forEach(cell => cell.classList.add('tie'));
         declareWinner("Tie Game!");
+        setTimeout(() => {
+            logGameState(() => initializeGameWithRandomDifficulty());
+        }, 2000);
         return true;
     }
     return false;
@@ -241,11 +194,37 @@ function checkWinner(board) {
     return board.every(spot => typeof spot !== 'number') ? 'tie' : null;
 }
 
-function changeDifficulty() {
-    let currentIndex = difficulties.indexOf(currentDifficulty);
-    currentDifficulty = difficulties[(currentIndex + 1) % difficulties.length];
-    document.getElementById('difficulty').innerText = `Difficulty: ${currentDifficulty}`;
-    initializeGame();
+function logGameState(callback) {
+    let logData = `Difficulty: ${currentDifficulty}\n\nMoves:\n`;
+
+    moveHistory.forEach((move) => {
+        logData += `${move.player} at position ${move.position}\n`;
+    });
+
+    const gameWon = checkWin(board, player) || checkWin(board, ai);
+    if (gameWon) {
+        const winner = gameWon.player === player ? "X" : "O";
+        logData += `\nWinner: ${winner}\nWinning combination: ${winCombos[gameWon.index].join(", ")}\n`;
+    } else if (checkTie()) {
+        logData += `\nResult: Tie Game\n`;
+    }
+
+    fetch('http://127.0.0.1:5000/log', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ log: logData })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Game logged successfully:', data.message);
+        callback();
+    })
+    .catch(error => {
+        console.error('Error logging game state:', error);
+        callback();
+    });
 }
 
 function clearHighlight() {
@@ -256,4 +235,5 @@ function clearHighlight() {
 
 function declareWinner(result) {
     document.querySelector('.finish .message').innerText = result;
+    document.querySelector('.finish').style.display = "block";
 }
