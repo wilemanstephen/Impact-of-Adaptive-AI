@@ -1,9 +1,0 @@
-Difficulty: Defensive
-X position 0
-O position 1
-X position 3
-O position 5
-X position 6
-O position 8
-Winner: X
-Winning move: [0, 3, 6]

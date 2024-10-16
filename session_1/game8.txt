@@ -1,7 +1,0 @@
-Difficulty: Offensive
-X position 0
-O position 2
-X position 3
-O position 4
-Winner: O
-Winning move: [2, 4, 6]

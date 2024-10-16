@@ -1,8 +1,0 @@
-Difficulty: Easy
-X position 0
-O position 2
-X position 4
-O position 5
-X position 7
-Winner: X
-Winning move: [1, 4, 7]
