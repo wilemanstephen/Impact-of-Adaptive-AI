@@ -27,6 +27,31 @@
             <td class="cell" id="8"></td>
         </tr>
     </table>
+    <button id="aiVsAiBtn">AI vs AI</button>
+    <div id="ai1DifficultyModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Difficulty for AI 1 (X)</h2>
+            <form id="ai1DifficultyForm">
+                <label><input type="radio" name="ai1Difficulty" value="Easy"> Easy</label><br>
+                <label><input type="radio" name="ai1Difficulty" value="Defensive"> Defensive</label><br>
+                <label><input type="radio" name="ai1Difficulty" value="Offensive"> Offensive</label><br>
+                <label><input type="radio" name="ai1Difficulty" value="Optimal"> Optimal</label><br>
+                <button type="button" onclick="submitAi1Difficulty()">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div id="ai2DifficultyModal" class="modal">
+        <div class="modal-content">
+            <h2>Select Difficulty for AI 2 (O)</h2>
+            <form id="ai2DifficultyForm">
+                <label><input type="radio" name="ai2Difficulty" value="Easy"> Easy</label><br>
+                <label><input type="radio" name="ai2Difficulty" value="Defensive"> Defensive</label><br>
+                <label><input type="radio" name="ai2Difficulty" value="Offensive"> Offensive</label><br>
+                <label><input type="radio" name="ai2Difficulty" value="Optimal"> Optimal</label><br>
+                <button type="button" onclick="submitAi2Difficulty()">Submit</button>
+            </form>
+        </div>
+    </div>    
     <div class="finish">
         <div class="message"></div>
     </div>

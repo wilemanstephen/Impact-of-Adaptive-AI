@@ -1,0 +1,23 @@
+body {
+    font-family: "Sans Serif";
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #87CEEB;
+}
+
+canvas {
+    display: block;
+    background-color: #90EE90;
+}
+
+#score-container {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    font-size: 24px;
+    color: white;
+}
