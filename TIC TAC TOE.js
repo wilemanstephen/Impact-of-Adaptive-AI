@@ -283,12 +283,23 @@ function logGameState(callback) {
     } else if (checkTie()) {
         logData += `\nResult: Tie Game\n`;
     }
+
+    const username = document.getElementById('username').value.trim();
+    if (!username) {
+        alert('Please enter a username to log the game.');
+        return;
+    }
+
     fetch('http://127.0.0.1:5000/log', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ log: logData })
+        body: JSON.stringify({
+            username: username,
+            difficulty: ai1Difficulty && ai2Difficulty ? `${ai1Difficulty} vs ${ai2Difficulty}` : currentDifficulty,
+            log: logData
+        })
     })
     .then(response => response.json())
     .then(data => {
