@@ -8,8 +8,6 @@
 </head>
 <body>
     <div id="info">
-        <label for="username">Username: </label>
-        <input type="text" id="username" placeholder="Enter your username">
         <h2 id="difficulty">Difficulty: Easy</h2>
     </div>
     <table>
@@ -57,15 +55,6 @@
     <div class="finish">
         <div class="message"></div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const username = urlParams.get('username');
-            if (username) {
-                document.getElementById('username').value = username;
-            }
-        });
-    </script>
     <script src="TIC TAC TOE.js"></script>
     <script src="replay.js"></script>
 </body>

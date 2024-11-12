@@ -134,7 +134,6 @@ function updateAISnakes() {
         for (let i = 0; i < aiSnakes.length; i++) {
             if (!aiRespawnTimers[i]) {
                 moveAISnakeTowardsFood(aiSnakes[i], i);
-                // Check collision with player's body
                 for (let j = 0; j < snakeBody.length; j++) {
                     if (Math.abs(aiSnakes[i].x - snakeBody[j][0]) < blockSize && Math.abs(aiSnakes[i].y - snakeBody[j][1]) < blockSize) {
                         respawnAISnake(aiSnakes[i], i);
@@ -214,13 +213,11 @@ function moveAISnakeTowardsFood(aiSnake, index) {
 
     aiSnake.body[0] = [aiSnake.x, aiSnake.y];
 
-    // Randomly choose one of the available food items to target
     if (!aiSnake.targetFood || !foodItems.includes(aiSnake.targetFood)) {
         aiSnake.targetFood = foodItems[Math.floor(Math.random() * foodItems.length)];
     }
     let targetFood = aiSnake.targetFood;
 
-    // Move towards the chosen food
     if (Math.abs(aiSnake.x - targetFood[0]) > Math.abs(aiSnake.y - targetFood[1])) {
         if (aiSnake.x < targetFood[0]) {
             aiSnake.velocityX = blockSize;
