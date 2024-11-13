@@ -140,14 +140,9 @@ function gameOver(gameWon) {
         document.getElementById(index).classList.add('win-highlight');
     }
 
-    if (isAiVsAiMode) {
-        document.querySelector('.finish').style.display = "block";
-        document.querySelector('.finish .message').innerText = gameWon.player === player ? "AI 1 (X) wins!" : "AI 2 (O) wins!";
-    } else {
-        document.querySelector('.finish').style.display = "block";
-        document.querySelector('.finish .message').innerText = gameWon.player === player ? "You win!" : "You lose!";
-        updateScore(gameWon.player);
-    }
+    document.querySelector('.finish').style.display = "block";
+    document.querySelector('.finish .message').innerText = isAiVsAiMode ? (gameWon.player === player ? "AI 1 (X) wins!" : "AI 2 (O) wins!") : (gameWon.player === player ? "You win!" : "You lose!");
+    updateScore(gameWon.player);
 
     cells.forEach(cell => cell.removeEventListener('click', turnClick));
     setTimeout(() => {
@@ -156,15 +151,11 @@ function gameOver(gameWon) {
 }
 
 function declareWinner(result) {
-    if (result === "It's a tie!") {
-        updateScore(null);
-    }
     document.querySelector('.finish').style.display = "block";
     document.querySelector('.finish .message').innerText = result;
     setTimeout(() => {
         initializeGameWithAdaptiveDifficulty();
     }, 2000);
-    document.querySelector('.finish .message').innerText = result;
 }
 
 function highlightTie() {
