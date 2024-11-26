@@ -17,56 +17,43 @@ def ai_move(difficulty, board):
     elif difficulty == DEFENSIVE:
         if 4 in available_moves:
             return 4
+        move = find_critical_move(board, "O")
+        if move is not None:
+            return move
         return random.choice(available_moves)
     elif difficulty == OFFENSIVE:
-        if 4 in available_moves:
-            return 4
-        for move in available_moves:
-            board[move] = "X"
-            if check_winner(board, "X"):
-                board[move] = " "
-                return move
-            board[move] = " "
+        move = find_critical_move(board, "O")
+        if move is not None:
+            return move
+        move = find_critical_move(board, "X")
+        if move is not None:
+            return move
         return random.choice(available_moves)
     elif difficulty == OPTIMAL:
-        best_score = -float('inf')
-        best_move = None
-        for move in available_moves:
-            board[move] = "O"
-            score = minimax(board, 0, False)
-            board[move] = " "
-            if score > best_score:
-                best_score = score
-                best_move = move
-        return best_move
+        return adaptive_strategy(board)
     return random.choice(available_moves)
 
-def minimax(board, depth, is_maximizing):
-    if check_winner(board, "O"):
-        return 1
-    elif check_winner(board, "X"):
-        return -1
-    elif " " not in board:
-        return 0
+def find_critical_move(board, player):
+    win_combinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ]
+    for combo in win_combinations:
+        values = [board[i] for i in combo]
+        if values.count(player) == 2 and values.count(" ") == 1:
+            return combo[values.index(" ")]
+    return None
 
-    if is_maximizing:
-        best_score = -float('inf')
-        for i in range(9):
-            if board[i] == " ":
-                board[i] = "O"
-                score = minimax(board, depth + 1, False)
-                board[i] = " "
-                best_score = max(score, best_score)
-        return best_score
-    else:
-        best_score = float('inf')
-        for i in range(9):
-            if board[i] == " ":
-                board[i] = "X"
-                score = minimax(board, depth + 1, True)
-                board[i] = " "
-                best_score = min(score, best_score)
-        return best_score
+def adaptive_strategy(board):
+    if " " not in board:
+        return None
+    difficulties = [OFFENSIVE, DEFENSIVE, EASY]
+    for difficulty in difficulties:
+        move = ai_move(difficulty, board)
+        if move is not None:
+            return move
+    return random.choice([i for i, v in enumerate(board) if v == " "])
 
 def check_winner(board, player):
     win_combinations = [
@@ -109,7 +96,7 @@ def run_simulations(ai1_difficulty, ai2_difficulty, num_games=1000):
     x_win_ratios = [0]
     o_win_ratios = [0]
 
-    games_folder = os.path.join('games', f'{ai1_difficulty}_{ai2_difficulty}')
+    games_folder = os.path.join('games_TIC_TAC_TOE', f'{ai1_difficulty}_{ai2_difficulty}')
     if not os.path.exists(games_folder):
         os.makedirs(games_folder)
 
@@ -140,7 +127,7 @@ def run_simulations(ai1_difficulty, ai2_difficulty, num_games=1000):
     return np.array(x_win_ratios), np.array(o_win_ratios), x_wins, o_wins, ties
 
 def main():
-    ai1_difficulty = "Optimal"
+    ai1_difficulty = "Easy"
     ai2_difficulty = "Optimal"
     
     x_win_ratios, o_win_ratios, x_wins, o_wins, ties = run_simulations(ai1_difficulty, ai2_difficulty, 1000)
@@ -166,9 +153,9 @@ def main():
     
     plt.legend(handles=[x_win_patch, o_win_patch, tie_patch], loc="upper left", prop={'size': 10})
     
-    if not os.path.exists('stats'):
-        os.makedirs('stats')
-    plt.savefig(f'stats/{ai1_difficulty}_{ai2_difficulty}.jpg')
+    if not os.path.exists('stats_TIC_TAC_TOE'):
+        os.makedirs('stats_TIC_TAC_TOE')
+    plt.savefig(f'stats_TIC_TAC_TOE/{ai1_difficulty}_{ai2_difficulty}.jpg')
     plt.show()
 
 if __name__ == "__main__":
