@@ -127,7 +127,7 @@ def run_simulations(ai1_difficulty, ai2_difficulty, num_games=1000):
     return np.array(x_win_ratios), np.array(o_win_ratios), x_wins, o_wins, ties
 
 def main():
-    ai1_difficulty = "Easy"
+    ai1_difficulty = "Defensive"
     ai2_difficulty = "Optimal"
     
     x_win_ratios, o_win_ratios, x_wins, o_wins, ties = run_simulations(ai1_difficulty, ai2_difficulty, 1000)
