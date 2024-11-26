@@ -35,9 +35,14 @@ def ai_move(difficulty, board):
 
 def find_critical_move(board, player):
     win_combinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
+        [0, 1, 2], 
+        [3, 4, 5], 
+        [6, 7, 8],
+        [0, 3, 6], 
+        [1, 4, 7], 
+        [2, 5, 8],
+        [0, 4, 8], 
+        [2, 4, 6]
     ]
     for combo in win_combinations:
         values = [board[i] for i in combo]
@@ -57,9 +62,14 @@ def adaptive_strategy(board):
 
 def check_winner(board, player):
     win_combinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
+        [0, 1, 2], 
+        [3, 4, 5], 
+        [6, 7, 8],
+        [0, 3, 6], 
+        [1, 4, 7], 
+        [2, 5, 8],
+        [0, 4, 8], 
+        [2, 4, 6]
     ]
     for combo in win_combinations:
         if all(board[i] == player for i in combo):
