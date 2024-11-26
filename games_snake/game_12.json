@@ -1,6 +1,6 @@
 {
-    "Score": 110,
-    "Time of survival": 60,
-    "Difficulty when the snake died": "Offensive",
-    "Way the snake died": "Hit an AI snake"
+    "Score": 9,
+    "Time of survival": 50,
+    "Difficulty when the snake died": "Defensive",
+    "Way the snake died": "Hit its own tail"
 }

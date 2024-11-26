@@ -9,17 +9,18 @@ class SnakeGameAI:
         self.rows = 20
         self.cols = 20
         self.snake_speed = 8
-        self.max_games = 1000
-        self.snake_body = []
+        self.snake_body = [[self.block_size * 5, self.block_size * 5]]
         self.food_items = []
+        self.obstacles = []
+        self.ai_snakes = []
         self.score = 0
         self.game_over = False
         self.survival_times = []
         self.current_time = 0
         self.death_reason = ""
         self.difficulty = "Easy"
-        self.obstacles = []
-        self.ai_snakes = []
+        self.ai_snake_speed = 1
+        self.place_food()
 
     def reset(self):
         self.snake_body = [[self.block_size * 5, self.block_size * 5]]
@@ -31,10 +32,9 @@ class SnakeGameAI:
         self.game_over = False
         self.current_time = 0
         self.death_reason = ""
-        self.difficulty = "Normal"
+        self.difficulty = "Easy"
 
     def place_food(self):
-        food_x, food_y = 0, 0
         while True:
             food_x = random.randint(0, self.cols - 1) * self.block_size
             food_y = random.randint(0, self.rows - 1) * self.block_size
@@ -60,7 +60,6 @@ class SnakeGameAI:
         self.place_ai_snake()
 
     def place_obstacle(self):
-        obstacle_x, obstacle_y = 0, 0
         while True:
             obstacle_x = random.randint(0, self.cols - 1) * self.block_size
             obstacle_y = random.randint(0, self.rows - 1) * self.block_size
@@ -80,8 +79,12 @@ class SnakeGameAI:
         self.ai_snakes.append(ai_snake)
 
     def get_next_move(self, head_x, head_y):
+        if random.random() < 0.6:
+            return random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
         if len(self.food_items) > 0:
             target_food = self.food_items[0]
+            if random.random() < 0.3:
+                return random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
             if head_x < target_food[0]:
                 return 1, 0
             elif head_x > target_food[0]:
@@ -99,7 +102,7 @@ class SnakeGameAI:
             velocity_x, velocity_y = self.get_next_move(head_x, head_y)
             head_x += velocity_x * self.block_size
             head_y += velocity_y * self.block_size
-            
+
             if head_x < 0 or head_x >= self.cols * self.block_size or head_y < 0 or head_y >= self.rows * self.block_size:
                 self.game_over = True
                 self.death_reason = "Hit a wall"
@@ -111,7 +114,7 @@ class SnakeGameAI:
             for obstacle in self.obstacles:
                 if [head_x, head_y] == obstacle:
                     self.game_over = True
-                    self.death_reason = "Hit a spike"
+                    self.death_reason = "Hit an obstacle"
                     break
             for ai_snake in self.ai_snakes:
                 for segment in ai_snake["body"]:
@@ -123,36 +126,41 @@ class SnakeGameAI:
                     break
             if self.game_over:
                 break
-            
+
             self.snake_body = [[head_x, head_y]] + self.snake_body[:-1]
-            
+
             if [head_x, head_y] == self.food_items[0]:
                 self.snake_body.append(self.snake_body[-1])
-                self.score += 10 if self.difficulty == 'Easy' else 15 if self.difficulty == 'Defensive' else 20 if self.difficulty == 'Offensive' else 25
+                self.score += random.randint(1, 10) if self.difficulty == 'Easy' else random.randint(5, 15) if self.difficulty == 'Defensive' else random.randint(10, 20) if self.difficulty == 'Offensive' else random.randint(15, 25)
+                self.update_difficulty()
                 if self.score >= 5 and self.difficulty == 'Easy':
                     self.activate_defensive_mode()
-                elif self.score >= 20 and self.difficulty == 'Defensive':
+                elif self.score >= 10 and self.difficulty == 'Defensive':
                     self.activate_offensive_mode()
-                elif self.score >= 30 and self.difficulty == 'Offensive':
+                elif self.score >= 15 and self.difficulty == 'Offensive':
                     self.activate_optimal_mode()
                 self.place_food()
-                if self.score >= 15 and self.difficulty != "Optimal":
-                    self.activate_optimal_mode()
-                elif self.score >= 10 and self.difficulty != "Offensive":
-                    self.activate_offensive_mode()
-                elif self.score >= 5 and self.difficulty != "Defensive":
-                    self.activate_defensive_mode()
-            
+
             self.current_time += 1
 
-        self.survival_times.append(self.current_time // 60 * 100 + self.current_time % 60)
+        self.survival_times.append(self.current_time)
         self.save_game_stats()
 
-    def run_simulation(self):
-        for game_number in range(self.max_games):
+    def run_simulation(self, max_games=100):
+        for game_number in range(max_games):
             self.reset()
             self.play_game()
         self.save_statistics()
+
+    def update_difficulty(self):
+        if 0 <= self.score <= 4:
+            self.difficulty = 'Easy'
+        elif 5 <= self.score <= 9:
+            self.difficulty = 'Defensive'
+        elif 10 <= self.score <= 14:
+            self.difficulty = 'Offensive'
+        else:
+            self.difficulty = 'Optimal'
 
     def save_game_stats(self):
         game_stats = {
@@ -161,40 +169,41 @@ class SnakeGameAI:
             "Difficulty when the snake died": self.difficulty,
             "Way the snake died": self.death_reason
         }
-        
-        if not os.path.exists("games_snake"): 
+
+        if not os.path.exists("games_snake"):
             os.makedirs("games_snake")
-        
+
         with open(f"games_snake/game_{len(self.survival_times)}.json", "w") as f:
             json.dump(game_stats, f, indent=4)
 
     def save_statistics(self):
+        scores = [json.load(open(f'games_snake/game_{i+1}.json'))['Score'] for i in range(len(self.survival_times))]
+        difficulties = [json.load(open(f'games_snake/game_{i+1}.json'))['Difficulty when the snake died'] for i in range(len(self.survival_times))]
+        most_frequent_difficulty = max(set(difficulties), key=difficulties.count)
+        least_frequent_difficulty = min(set(difficulties), key=difficulties.count)
+
         if not os.path.exists("stats_snake"):
             os.makedirs("stats_snake")
-        
+
         stats = {
             "survival_times": self.survival_times,
             "max_time": max(self.survival_times),
             "min_time": min(self.survival_times),
-            "avg_time": sum(self.survival_times) / len(self.survival_times)
+            "avg_time": sum(self.survival_times) / len(self.survival_times),
+            "max_score": max(scores),
+            "min_score": min(scores),
+            "avg_score": sum(scores) / len(scores),
+            "most_frequent_difficulty": most_frequent_difficulty,
+            "least_frequent_difficulty": least_frequent_difficulty
         }
-        
+
         with open("stats_snake/survival_stats.json", "w") as f:
             json.dump(stats, f, indent=4)
-        
-        formatted_times = [f"{time // 100:02d}:{time % 100:02d}" for time in self.survival_times]
-        plt.plot(range(1, len(self.survival_times) + 1), [time // 100 * 60 + time % 100 for time in self.survival_times], label='Survival Time')
+
+        plt.plot(range(1, len(self.survival_times) + 1), self.survival_times)
         plt.xlabel("Game Number")
         plt.ylabel("Survival Time (seconds)")
-        plt.title("Survival Time Evolution Over 1000 Games")
-        best_time = max(self.survival_times)
-        best_score = max([json.load(open(f"games_snake/game_{i + 1}.json"))['Score'] for i in range(len(self.survival_times))])
-        max_difficulty = max([json.load(open(f"games_snake/game_{i + 1}.json"))['Difficulty when the snake died'] for i in range(len(self.survival_times))], key=lambda x: ["Normal", "Defensive", "Offensive", "Optimal"].index(x))
-        plt.legend([
-            f"Best Survival Time: {best_time // 100} min {best_time % 100} sec", 
-            f"Best Score: {best_score}", 
-            f"Max Difficulty Reached: {max_difficulty}"
-        ], loc='upper center')
+        plt.title("Survival Time Evolution Over Games")
         plt.savefig("stats_snake/survival_time_evolution.jpg")
         plt.close()
 

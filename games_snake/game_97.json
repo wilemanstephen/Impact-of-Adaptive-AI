@@ -1,6 +1,6 @@
 {
-    "Score": 25,
-    "Time of survival": 22,
+    "Score": 20,
+    "Time of survival": 187,
     "Difficulty when the snake died": "Optimal",
-    "Way the snake died": "Hit a spike"
+    "Way the snake died": "Hit its own tail"
 }
