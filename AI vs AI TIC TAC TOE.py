@@ -15,8 +15,6 @@ def ai_move(difficulty, board):
     if difficulty == EASY:
         return random.choice(available_moves)
     elif difficulty == DEFENSIVE:
-        if 4 in available_moves:
-            return 4
         move = find_critical_move(board, "O")
         if move is not None:
             return move
@@ -194,7 +192,6 @@ def create_heatmaps(ai1_difficulty, ai2_difficulty):
     if not os.path.exists(stats_folder):
         os.makedirs(stats_folder)
 
-    # Win Rate Heatmap
     plt.figure(figsize=(8, 8))
     plt.imshow(win_rate, cmap='Greens', interpolation='nearest', vmin=0, vmax=100)
     for i in range(3):
@@ -211,7 +208,6 @@ def create_heatmaps(ai1_difficulty, ai2_difficulty):
     plt.savefig(heatmap_path)
     plt.close()
 
-    # Lose Rate Heatmap
     plt.figure(figsize=(8, 8))
     plt.imshow(lose_rate, cmap='Reds', interpolation='nearest', vmin=0, vmax=100)
     for i in range(3):
@@ -228,7 +224,6 @@ def create_heatmaps(ai1_difficulty, ai2_difficulty):
     plt.savefig(heatmap_path)
     plt.close()
 
-    # Tie Rate Heatmap
     plt.figure(figsize=(8, 8))
     plt.imshow(tie_rate, cmap='Greys', interpolation='nearest', vmin=0, vmax=100)
     for i in range(3):
@@ -247,7 +242,7 @@ def create_heatmaps(ai1_difficulty, ai2_difficulty):
 
 def main():
     ai1_difficulty = "Defensive"
-    ai2_difficulty = "Defensive"
+    ai2_difficulty = "Optimal"
     run_simulations(ai1_difficulty, ai2_difficulty, 1000)
     create_heatmaps(ai1_difficulty, ai2_difficulty)
 
