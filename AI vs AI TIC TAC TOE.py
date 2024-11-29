@@ -241,7 +241,7 @@ def create_heatmaps(ai1_difficulty, ai2_difficulty):
     plt.close()
 
 def main():
-    ai1_difficulty = "Offensive"
+    ai1_difficulty = "Optimal"
     ai2_difficulty = "Optimal"
     run_simulations(ai1_difficulty, ai2_difficulty, 1000)
     create_heatmaps(ai1_difficulty, ai2_difficulty)
