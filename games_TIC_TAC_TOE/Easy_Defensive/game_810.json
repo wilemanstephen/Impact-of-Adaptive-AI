@@ -2,11 +2,11 @@
     "Winner": "O",
     "Loser": "X",
     "Moves": [
-        "X: 7",
+        "X: 1",
         "O: 4",
         "X: 5",
         "O: 6",
-        "X: 1",
+        "X: 3",
         "O: 2"
     ],
     "Winning Move": [
