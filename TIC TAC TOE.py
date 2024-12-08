@@ -11,6 +11,7 @@ class TicTacToe:
     def __init__(self):
         self.username = None
         self.base_directory = None
+        self.optimal_wins = 0
         self.create_login_popup()
 
     def create_login_popup(self):
@@ -192,6 +193,11 @@ class TicTacToe:
                 if player == self.player:
                     messagebox.showinfo("Game Over", "You win!")
                     self.player_score += 1
+                    if self.current_difficulty == "Optimal":
+                        self.optimal_wins += 1
+                        if self.optimal_wins == 2:
+                            messagebox.showinfo("Congratulations", "You have won twice in Optimal difficulty! The game will now stop.")
+                            self.root.destroy()
                     self.save_game_log("X", "O", self.moves, combo)
                 else:
                     messagebox.showinfo("Game Over", "You lose!")
