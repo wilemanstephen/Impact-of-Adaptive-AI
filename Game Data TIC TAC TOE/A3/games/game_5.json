@@ -1,0 +1,17 @@
+{
+    "Difficulty": "Offensive",
+    "Winner": "Tie",
+    "Loser": "Tie",
+    "Moves": [
+        "X: 0",
+        "O: 8",
+        "X: 2",
+        "O: 1",
+        "X: 4",
+        "O: 6",
+        "X: 7",
+        "O: 5",
+        "X: 3"
+    ],
+    "Winning Move": []
+}
