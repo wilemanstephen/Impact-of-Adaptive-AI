@@ -1,20 +1,16 @@
 {
-    "Winner": "X",
-    "Loser": "O",
+    "Winner": "Tie",
+    "Loser": "Tie",
     "Moves": [
-        "X: 7",
-        "O: 8",
-        "X: 5",
-        "O: 0",
         "X: 4",
         "O: 3",
-        "X: 6",
+        "X: 0",
+        "O: 8",
+        "X: 7",
         "O: 1",
-        "X: 2"
+        "X: 2",
+        "O: 6",
+        "X: 5"
     ],
-    "Winning Move": [
-        2,
-        4,
-        6
-    ]
+    "Winning Move": []
 }
