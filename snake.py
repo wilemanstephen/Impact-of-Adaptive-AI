@@ -169,15 +169,15 @@ def change_direction(key):
 
 def activate_next_mode():
     global is_easy_mode, is_defensive_mode, is_offensive_mode, is_optimal_mode, game_over
-    if is_easy_mode and score >= 3:
+    if is_easy_mode and score >= 5:
         is_easy_mode = False
         is_defensive_mode = True
         activate_defensive_mode()
-    elif is_defensive_mode and score >= 8:
+    elif is_defensive_mode and score >= 10:
         is_defensive_mode = False
         is_offensive_mode = True
         activate_offensive_mode()
-    elif is_offensive_mode and score >= 13:
+    elif is_offensive_mode and score >= 15:
         is_offensive_mode = False
         is_optimal_mode = True
         activate_optimal_mode()

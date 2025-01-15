@@ -1,0 +1,19 @@
+{
+    "Difficulty": "Offensive",
+    "Winner": "X",
+    "Loser": "O",
+    "Moves": [
+        "X: 5",
+        "O: 3",
+        "X: 0",
+        "O: 6",
+        "X: 2",
+        "O: 1",
+        "X: 8"
+    ],
+    "Winning Move": [
+        2,
+        5,
+        8
+    ]
+}
