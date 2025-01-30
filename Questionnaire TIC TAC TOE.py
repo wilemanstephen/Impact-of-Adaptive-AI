@@ -30,9 +30,9 @@ questions = [
     "Losing against the AI makes me want to improve my strategy.",
     "I prefer to play defensively to avoid losing rather than offensively to win.",
     "I try to take the center spot at the beginning of the game.",
-    "I adjust my strategy depending on whether I play as X or O.",
+    "I adjust my strategy depending on the state of the board.",
     "When playing at 'Defensive' difficulty, I feel confident in countering the AI's moves.",
-    "I find it easier to win when playing as X than as O.",
+    "I find it easier to win when starting at corners than any other square.",
     "Blocking my opponent’s winning moves is more important than trying to win directly.",
     "I feel satisfied even when the game ends in a tie if I played my best."
 ]
